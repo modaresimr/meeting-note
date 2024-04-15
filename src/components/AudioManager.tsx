@@ -8,6 +8,7 @@ import Constants from "../utils/Constants";
 import { Transcriber } from "../hooks/useTranscriber";
 import Progress from "./Progress";
 import AudioRecorder from "./AudioRecorder";
+import AudioCapture from "./AudioCapture";
 
 function titleCase(str: string) {
     str = str.toLowerCase();
@@ -274,8 +275,19 @@ export function AudioManager(props: { transcriber: Transcriber }) {
                                     setAudioFromRecording(e);
                                 }}
                             />
+
+                            <VerticalBar />
+                            <CaptureTile
+                                icon={<ScreenIcon />}
+                                text={"Capture"}
+                                setAudioData={(e) => {
+                                    props.transcriber.onInputChange();
+                                    setAudioFromRecording(e);
+                                }}
+                            />
                         </>
                     )}
+                    
                 </div>
                 {
                     <AudioDataBar
@@ -695,6 +707,79 @@ function RecordModal(props: {
     );
 }
 
+function CaptureTile(props: {
+    icon: JSX.Element;
+    text: string;
+    setAudioData: (data: Blob) => void;
+}) {
+    const [showModal, setShowModal] = useState(false);
+
+    const onClick = () => {
+        setShowModal(true);
+    };
+
+    const onClose = () => {
+        setShowModal(false);
+    };
+
+    const onSubmit = (data: Blob | undefined) => {
+        if (data) {
+            props.setAudioData(data);
+            onClose();
+        }
+    };
+
+    return (
+        <>
+            <Tile icon={props.icon} text={props.text} onClick={onClick} />
+            <CaptureModal
+                show={showModal}
+                onSubmit={onSubmit}
+                onClose={onClose}
+            />
+        </>
+    );
+}
+function CaptureModal(props: {
+    show: boolean;
+    onSubmit: (data: Blob | undefined) => void;
+    onClose: () => void;
+}) {
+    const [audioBlob, setAudioBlob] = useState<Blob>();
+
+    const onRecordingComplete = (blob: Blob) => {
+        setAudioBlob(blob);
+    };
+
+    const onSubmit = () => {
+        props.onSubmit(audioBlob);
+        setAudioBlob(undefined);
+    };
+
+    const onClose = () => {
+        props.onClose();
+        setAudioBlob(undefined);
+    };
+
+    return (
+        <Modal
+            show={props.show}
+            title={"From Recording"}
+            content={
+                <>
+                    {"Record audio using your screen share"}
+                    <AudioCapture onRecordingComplete={onRecordingComplete} />
+                </>
+            }
+            onClose={onClose}
+            submitText={"Load"}
+            submitEnabled={audioBlob !== undefined}
+            onSubmit={onSubmit}
+        />
+    );
+}
+
+
 function Tile(props: {
     icon: JSX.Element;
     text?: string;
@@ -789,5 +874,24 @@ function MicrophoneIcon() {
                 d='M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z'
             />
         </svg>
+    );
+}
+
+
+function ScreenIcon(){
+    return (
+        <svg 
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox="0 0 28 28"
+            fill='currentColor'
+            stroke='currentColor'
+        >
+        <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            d="M23.75,4.99939 C24.9926,4.99939 26,6.00675 26,7.24939 L26,20.75 C26,21.9926 24.9926,23 23.75,23 L4.25,23 C3.00736,23 2,21.9927 2,20.75 L2,7.24939 C2,6.00675 3.00736,4.99939 4.25,4.99939 L23.75,4.99939 Z M23.75,6.49939 L4.25,6.49939 C3.83579,6.49939 3.5,6.83518 3.5,7.24939 L3.5,20.75 C3.5,21.1642 3.83579,21.5 4.25,21.5 L23.75,21.5 C24.1642,21.5 24.5,21.1642 24.5,20.75 L24.5,7.24939 C24.5,6.83518 24.1642,6.49939 23.75,6.49939 Z M13.9975,8.62102995 C14.1965,8.62102995 14.3874,8.69998 14.5281,8.8407 L17.7826,12.0952 C18.0755,12.3881 18.0755,12.863 17.7826,13.1559 C17.4897,13.4488 17.0148,13.4488 16.7219,13.1559 L14.7477,11.1817 L14.7477,18.6284 C14.7477,19.0426 14.412,19.3784 13.9977,19.3784 C13.5835,19.3784 13.2477,19.0426 13.2477,18.6284 L13.2477,11.1835 L11.2784,13.1555 C10.9858,13.4486 10.5109,13.4489 10.2178,13.1562 C9.92469,12.8636 9.92436,12.3887 10.217,12.0956 L13.467,8.84107 C13.6077,8.70025 13.7985,8.62102995 13.9975,8.62102995 Z" 
+        />            
+        </svg>
+
     );
 }

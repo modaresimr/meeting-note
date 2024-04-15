@@ -16,9 +16,7 @@ function App() {
                 </h2>
                 <AudioManager transcriber={transcriber} />
                 <Transcript transcribedData={transcriber.output} />
-            </div>
-
-            <div className='absolute bottom-4'>
+                <div className='bottom-4'>
                 Made with{" "}
                 <a
                     className='underline'
@@ -27,6 +25,9 @@ function App() {
                     🤗 Transformers.js
                 </a>
             </div>
+            </div>
+
+
         </div>
     );
 }
