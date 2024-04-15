@@ -23,4 +23,4 @@ jobs:
         with:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}  # GitHub token with repo access
           BRANCH: deploy  # Branch to deploy to (replace with your desired branch)
-          FOLDER: build  # Folder containing the built files
+          FOLDER: dist  # Folder containing the built files
