@@ -13,7 +13,7 @@ function App() {
                 </h1>
                 
                 <h2 className='mt-3 mb-5 px-4 text-center text-1xl font-semibold tracking-tight text-slate-900 sm:text-2xl'>
-                    Offline speech recognition. No data send to any server.
+                    Free and Offline meeting note extractor in your browser. No data send to any server.
                 </h2>
                 
                 <AudioManager transcriber={transcriber} />
